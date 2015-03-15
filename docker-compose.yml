@@ -1,0 +1,20 @@
+mysql:
+  image: mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: password
+etherpad:
+  image: tvelocity/etherpad-lite
+  links:
+    - mysql
+  expose:
+    - "9001"
+onion:
+  image: patrickod/tor-hidden-service
+  links:
+    - etherpad
+explorer:
+  image:  ubuntu
+  volumes_from:
+    - onion
+    - etherpad
+  command: cat /var/lib/tor/hidden-service/hostname
